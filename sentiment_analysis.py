@@ -23,11 +23,19 @@ def sentiment_detection(polarity):
       return 'Neutral'
     else:
       return 'Positive'
+
+
 def polarity_detection(text):
     return TextBlob(text).sentiment.polarity
+
+
 def subjectivity_detection(text):
     return TextBlob(text).sentiment.subjectivity
+
+
 def text_classification(words):
+    # udf: User Defined Funtion
+    # see e.g. https://sparkbyexamples.com/pyspark/pyspark-udf-user-defined-function/
     # polarity detection
     polarity_detection_udf = udf(polarity_detection, StringType())
     words = words.withColumn("polarity", polarity_detection_udf("word"))
@@ -40,14 +48,16 @@ def text_classification(words):
     return words
 
 def write_mongo_row(df, epoch_id):
-    mongoURL = "mongodb://localhost:27017/sentiment.sentiment2"
-    df.write.format("mongo").mode("append").option("uri",mongoURL).save()
+    #mongoURL = "mongodb://localhost:27017/sentiment.sentiment2"
+    #df.write.format("mongodb").mode("append").option("uri",mongoURL).save()
+    df.write.format("mongodb").mode("append").save()
     pass
 
 
 if __name__ == "__main__":
     # create Spark session
-    spark = SparkSession.builder.master("spark://master:7077").appName("TwitterSentimentAnalysis").getOrCreate()
+    #spark = SparkSession.builder.master("spark://master:7077").appName("TwitterSentimentAnalysis").getOrCreate()
+    spark = SparkSession.builder.appName("TwitterSentimentAnalysis").getOrCreate()
 
     # read the tweet data from socket
     lines = spark.readStream.format("socket").option("host", "0.0.0.0").option("port", 5555).load()
@@ -57,14 +67,16 @@ if __name__ == "__main__":
     words = text_classification(words)
     #words.printSchema();
 
-    words = words.repartition(1)
-    query = words.writeStream.queryName("all_tweets")\
-        .outputMode("append").format("console")\
-        .option("checkpointLocation", "./check")\
-        .trigger(processingTime='10 seconds').start()
+    #words = words.repartition(1)
+    # https://medium.com/globant/multiple-sinks-in-spark-structured-streaming-38997d9a59e9
+    # https://stackoverflow.com/questions/45618489/executing-separate-streaming-queries-in-spark-structured-streaming    
+    #query = words.writeStream.queryName("all_tweets")\
+    #    .outputMode("update").format("console")\
+    #    .option("checkpointLocation", "./check")\
+    #    .trigger(processingTime='5 seconds').start()
     query2=words.writeStream.foreachBatch(write_mongo_row).start()
 
 
-    query.awaitTermination()
-    query2.awaitTermination()
-    
+    #query.awaitTermination()
+    #query2.awaitTermination()
+    spark.streams.awaitAnyTermination()
