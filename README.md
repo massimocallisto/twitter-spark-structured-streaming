@@ -2,7 +2,7 @@
 
 Original example: https://towardsdatascience.com/sentiment-analysis-on-streaming-twitter-data-using-spark-structured-streaming-python-fc873684bfe3
 
-**Update: that this example is no longer valid due to the Twitter X API update program. Now it is required a paid subscription to read twees.** See more on this [link](https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api])
+**Update: this example is no longer valid due to the Twitter X API update program. Now it is required a paid subscription to read twees.** See more on this [link](https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api]). It has been updated to work in combination of a remote TCP server.
 
 
 ## Requirements and assumption:
