@@ -5,6 +5,7 @@ from pyspark.sql import functions as F
 from textblob import TextBlob
 
 def preprocessing(lines):
+    # some part are based on the original Twitter example and how data is exchanged from the Twitter tcp server 
     words = lines.select(explode(split(lines.value, "t_end")).alias("word"))
     words = words.na.replace('', None)
     words = words.na.drop()
