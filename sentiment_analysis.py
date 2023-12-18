@@ -65,6 +65,7 @@ if __name__ == "__main__":
     # Preprocess the data
     words = preprocessing(lines)
     # text classification to define polarity and subjectivity
+    # see e.g. https://www.linkedin.com/advice/3/what-advantages-disadvantages-using-polarity
     words = text_classification(words)
     #words.printSchema();
 
