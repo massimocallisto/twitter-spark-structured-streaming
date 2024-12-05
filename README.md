@@ -7,7 +7,7 @@ Original example: https://towardsdatascience.com/sentiment-analysis-on-streaming
 
 ## Requirements and assumption:
 To run this example you need:
-* A local Spark cluster (docker, wsl, native linux)
+* A local Spark cluster (docker, wsl, native linux). *Tested on Spark 3.5.3, Java 11, Python 3.10.12*
 * A local MongoDB instance listening on port  27017
 *  ~~API access to Twitter to provide in   twitter_connection.py~~
 
@@ -43,11 +43,12 @@ Each line of text followed by a new line will be sent to a connected client.
 ### Run the Spark job
 Update the master ulr in the python file as weel as the mondo address. Finally run the command:
 
+
 ```
 spark-submit \
-  --master spark://localhost:7077 \
-  --packages org.mongodb.spark:mongo-spark-connector_2.13:10.2.1 \
-  --conf "spark.mongodb.write.connection.uri=mongodb://192.168.205.3/sentiment.tweets" \
+  --master spark://primary:7077 \
+  --packages org.mongodb.spark:mongo-spark-connector_2.12:10.4.0 \
+  --conf "spark.mongodb.write.connection.uri=mongodb://192.168.205.8/sentiment.tweets" \
   sentiment_analysis.py
 ```
 
